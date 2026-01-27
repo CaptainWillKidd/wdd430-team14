@@ -4,4 +4,5 @@ Project Members:
 Alanxander Bredee Holden
 Samuel Jonathan
 Wesley Pontes Lima
-Willian Alves Canutp
+Willian Alves Canuto
+Folusho Bamidele Sanni
