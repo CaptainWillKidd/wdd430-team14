@@ -25,110 +25,7 @@ const products: Product[] = [
   { id: 8, name: 'Handwoven Rug', category: 'Decorative', price: '$210.00', image: 'https://placehold.co/300x300/881337/white?text=Rug' },
 ];
 
-// --- Components ---
-
-const Navbar = () => (
-  <nav className="w-full bg-white border-b border-stone-200 sticky top-0 z-50">
-    <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-      {/* Brand */}
-      <div className="flex items-center">
-        <h1 className="text-2xl font-serif font-bold text-stone-800 tracking-tight">
-          Handcrafted Haven
-        </h1>
-      </div>
-
-      {/* Desktop Links */}
-      <div className="hidden md:flex space-x-8 text-sm font-medium text-stone-600">
-        <Link href="/" className="hover:text-rose-700 transition">Home</Link>
-        <Link href="/shop" className="hover:text-rose-700 transition">Shop</Link>
-        <Link href="/about" className="hover:text-rose-700 transition">About</Link>
-        <Link href="/artisans" className="hover:text-rose-700 transition">Artisans</Link>
-      </div>
-
-      {/* Icons & Login */}
-      <div className="flex items-center space-x-6">
-        {/* Search */}
-        <div className="hidden md:block relative">
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="pl-3 pr-8 py-1 rounded-full border border-stone-300 text-sm focus:border-rose-700 focus:outline-none"
-          />
-        </div>
-
-        {/* Login Link (Requested in Doc) */}
-        <Link href="/login" className="text-sm font-bold text-rose-800 hover:text-rose-900">
-          Login
-        </Link>
-
-        {/* Cart Icon (Requested in Doc) */}
-        <button className="relative text-stone-600 hover:text-rose-700">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          <span className="absolute -top-2 -right-2 bg-rose-700 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-            0
-          </span>
-        </button>
-      </div>
-    </div>
-  </nav>
-);
-
-const Footer = () => (
-  <footer className="bg-stone-900 text-stone-400 py-12 border-t border-rose-900">
-    <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
-      {/* Column 1: Brand */}
-      <div>
-        <h3 className="text-white text-lg font-serif font-bold mb-4">Handcrafted Haven</h3>
-        <p className="mb-4">
-          Connecting you with independent artisans to discover unique, one-of-a-kind pieces.
-        </p>
-        <div className="flex space-x-4">
-          {/* Social Placeholders */}
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">FB</div>
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">IG</div>
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">X</div>
-        </div>
-      </div>
-
-      {/* Column 2: Shop */}
-      <div>
-        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Shop</h4>
-        <ul className="space-y-2">
-          <li><Link href="#" className="hover:text-rose-500">All Products</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Classical Arts</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Modern & Abstract</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Home Decor</Link></li>
-        </ul>
-      </div>
-
-      {/* Column 3: Support */}
-      <div>
-        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Support</h4>
-        <ul className="space-y-2">
-          <li><Link href="#" className="hover:text-rose-500">Help Center</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Shipping & Returns</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Order Status</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Contact Us</Link></li>
-        </ul>
-      </div>
-
-      {/* Column 4: Legal */}
-      <div>
-        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Legal</h4>
-        <ul className="space-y-2">
-          <li><Link href="#" className="hover:text-rose-500">Privacy Policy</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Terms of Service</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Cookie Policy</Link></li>
-        </ul>
-      </div>
-    </div>
-    <div className="text-center mt-12 border-t border-stone-800 pt-8 text-xs">
-      &copy; {new Date().getFullYear()} Handcrafted Haven. All rights reserved.
-    </div>
-  </footer>
-);
+// --- Components (Navbar and Footer removed) ---
 
 const HeroSection = () => (
   <div className="bg-stone-50 py-16 md:py-24">
@@ -197,11 +94,11 @@ const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFil
   </div>
 );
 
-// --- Main Layout ---
+// --- Main Page ---
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
+    <div className="bg-white flex flex-col">
+      {/* Navbar is handled by layout.tsx */}
       
       <main className="flex-grow">
         {/* Hero Section */}
@@ -238,7 +135,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <Footer />
+      {/* Footer is handled by layout.tsx */}
     </div>
   );
 }
