@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '../context/CartContext';
 
 // --- Types ---
 interface Product {
@@ -27,53 +28,7 @@ const products: Product[] = [
 
 // --- Components ---
 
-const Navbar = () => (
-  <nav className="w-full bg-white border-b border-stone-200 sticky top-0 z-50">
-    <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-      {/* Brand */}
-      <div className="flex items-center">
-        <h1 className="text-2xl font-serif font-bold text-stone-800 tracking-tight">
-          Handcrafted Haven
-        </h1>
-      </div>
-
-      {/* Desktop Links */}
-      <div className="hidden md:flex space-x-8 text-sm font-medium text-stone-600">
-        <Link href="/" className="hover:text-rose-700 transition">Home</Link>
-        <Link href="/shop" className="hover:text-rose-700 transition">Shop</Link>
-        <Link href="/about" className="hover:text-rose-700 transition">About</Link>
-        <Link href="/artisans" className="hover:text-rose-700 transition">Artisans</Link>
-      </div>
-
-      {/* Icons & Login */}
-      <div className="flex items-center space-x-6">
-        {/* Search */}
-        <div className="hidden md:block relative">
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="pl-3 pr-8 py-1 rounded-full border border-stone-300 text-sm focus:border-rose-700 focus:outline-none"
-          />
-        </div>
-
-        {/* Login Link (Requested in Doc) */}
-        <Link href="/login" className="text-sm font-bold text-rose-800 hover:text-rose-900">
-          Login
-        </Link>
-
-        {/* Cart Icon (Requested in Doc) */}
-        <button className="relative text-stone-600 hover:text-rose-700">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          <span className="absolute -top-2 -right-2 bg-rose-700 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-            0
-          </span>
-        </button>
-      </div>
-    </div>
-  </nav>
-);
+// Header is provided globally via app layout
 
 const Footer = () => (
   <footer className="bg-stone-900 text-stone-400 py-12 border-t border-rose-900">
@@ -138,7 +93,7 @@ const HeroSection = () => (
         <h1 className="text-5xl md:text-6xl font-serif text-stone-900 leading-tight">
           Curated. Collectible. <br/> Yours.
         </h1>
-        <p className="text-lg text-stone-600">
+        <p className="text-lg text-stone-700">
           Explore a virtual marketplace dedicated to handcrafted excellence.
         </p>
         <Link href="/shop" className="inline-block bg-rose-800 text-white py-3 px-8 rounded-md font-medium hover:bg-rose-900 transition shadow-lg shadow-rose-900/20">
@@ -160,8 +115,10 @@ const HeroSection = () => (
   </div>
 );
 
-const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFilter: string[] }) => (
-  <div className="max-w-6xl mx-auto px-6 py-16">
+const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFilter: string[] }) => {
+  const { addItem } = useCart();
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-16">
     <div className="flex justify-between items-end mb-8">
       <div>
         <h2 className="text-3xl font-serif text-stone-900">{title}</h2>
@@ -187,21 +144,27 @@ const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFil
             )}
           </div>
           <div className="mt-4">
-            <p className="text-xs text-stone-500 uppercase tracking-wide">{product.category}</p>
+            <p className="text-xs text-stone-600 uppercase tracking-wide">{product.category}</p>
             <h3 className="text-lg font-medium text-stone-800 group-hover:text-rose-700 transition">{product.name}</h3>
             <p className="text-rose-700 font-bold mt-1">{product.price}</p>
+            <div className="mt-3 flex items-center space-x-2">
+              <button onClick={() => {
+                const cents = Math.round(parseFloat(product.price.replace(/[^0-9.]/g, '')) * 100);
+                addItem({ id: product.id, name: product.name, price: cents, image: product.image });
+              }} className="bg-rose-800 text-white px-3 py-1 rounded text-sm">Add to cart</button>
+            </div>
           </div>
         </div>
       ))}
     </div>
   </div>
-);
+  );
+};
 
 // --- Main Layout ---
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
       
       <main className="flex-grow">
         {/* Hero Section */}
