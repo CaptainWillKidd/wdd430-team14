@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useCart } from '../../../context/CartContext';
 
 // --- Mock Data (Extended for Detail View) ---
 const allProducts = [
@@ -44,6 +45,7 @@ export default function ProductDetailPage() {
   const params = useParams();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'reviews' | 'artisan'>('desc');
+  const { addItem } = useCart();
 
   // 1. Find the product that matches the URL ID
   // (We use a fallback if the product isn't found in our small list)
@@ -125,7 +127,7 @@ export default function ProductDetailPage() {
                     +
                   </button>
                 </div>
-                <button className="flex-1 bg-rose-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-rose-900 transition shadow-lg shadow-rose-900/20">
+                <button onClick={() => addItem({ id: product.id, name: product.name, price: Math.round(product.price * 100), image: product.image }, quantity)} className="flex-1 bg-rose-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-rose-900 transition shadow-lg shadow-rose-900/20">
                   Add to Cart
                 </button>
               </div>

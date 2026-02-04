@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useCart } from '../../context/CartContext';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,6 +24,7 @@ export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState(500);
+  const { addItem } = useCart();
 
   // Filter Logic
   const filteredProducts = allProducts.filter((product) => {
@@ -122,29 +124,34 @@ export default function ShopPage() {
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <Link href={`/shop/${product.id}`} key={product.id} className="group">
-                    <div className="bg-white rounded-lg overflow-hidden border border-stone-200 shadow-sm hover:shadow-md transition duration-300">
-                      <div className="relative aspect-square bg-stone-100">
-                        <Image 
-                          src={product.image} 
-                          alt={product.name} 
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-105" 
-                        />
-                        {/* Quick Add Button */}
-                        <button className="absolute bottom-4 right-4 bg-white text-rose-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-rose-800 hover:text-white">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                          </svg>
-                        </button>
+                  <div key={product.id} className="group">
+                    <Link href={`/shop/${product.id}`} className="block">
+                      <div className="bg-white rounded-lg overflow-hidden border border-stone-200 shadow-sm hover:shadow-md transition duration-300">
+                        <div className="relative aspect-square bg-stone-100">
+                          <Image 
+                            src={product.image} 
+                            alt={product.name} 
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                          />
+                        </div>
+                        <div className="p-4">
+                          <p className="text-xs text-stone-500 uppercase tracking-wide mb-1">{product.category}</p>
+                          <h3 className="text-lg font-serif font-medium text-stone-800 mb-1 group-hover:text-rose-800 transition">{product.name}</h3>
+                          <p className="font-bold text-rose-800">${product.price.toFixed(2)}</p>
+                        </div>
                       </div>
-                      <div className="p-4">
-                        <p className="text-xs text-stone-500 uppercase tracking-wide mb-1">{product.category}</p>
-                        <h3 className="text-lg font-serif font-medium text-stone-800 mb-1 group-hover:text-rose-800 transition">{product.name}</h3>
-                        <p className="font-bold text-rose-800">${product.price.toFixed(2)}</p>
-                      </div>
+                    </Link>
+
+                    {/* Quick Add Button (separate from Link so clicks won't navigate) */}
+                    <div className="mt-2 flex justify-end">
+                      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); addItem({ id: product.id, name: product.name, price: Math.round(product.price * 100), image: product.image }); }} className="bg-white text-rose-800 p-2 rounded-full shadow hover:bg-rose-800 hover:text-white transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </button>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (

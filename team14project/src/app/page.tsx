@@ -27,63 +27,7 @@ const products: Product[] = [
 ];
 
 // --- Components ---
-
-// Header is provided globally via app layout
-
-const Footer = () => (
-  <footer className="bg-stone-900 text-stone-400 py-12 border-t border-rose-900">
-    <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
-      {/* Column 1: Brand */}
-      <div>
-        <h3 className="text-white text-lg font-serif font-bold mb-4">Handcrafted Haven</h3>
-        <p className="mb-4">
-          Connecting you with independent artisans to discover unique, one-of-a-kind pieces.
-        </p>
-        <div className="flex space-x-4">
-          {/* Social Placeholders */}
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">FB</div>
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">IG</div>
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">X</div>
-        </div>
-      </div>
-
-      {/* Column 2: Shop */}
-      <div>
-        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Shop</h4>
-        <ul className="space-y-2">
-          <li><Link href="#" className="hover:text-rose-500">All Products</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Classical Arts</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Modern & Abstract</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Home Decor</Link></li>
-        </ul>
-      </div>
-
-      {/* Column 3: Support */}
-      <div>
-        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Support</h4>
-        <ul className="space-y-2">
-          <li><Link href="#" className="hover:text-rose-500">Help Center</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Shipping & Returns</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Order Status</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Contact Us</Link></li>
-        </ul>
-      </div>
-
-      {/* Column 4: Legal */}
-      <div>
-        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Legal</h4>
-        <ul className="space-y-2">
-          <li><Link href="#" className="hover:text-rose-500">Privacy Policy</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Terms of Service</Link></li>
-          <li><Link href="#" className="hover:text-rose-500">Cookie Policy</Link></li>
-        </ul>
-      </div>
-    </div>
-    <div className="text-center mt-12 border-t border-stone-800 pt-8 text-xs">
-      &copy; {new Date().getFullYear()} Handcrafted Haven. All rights reserved.
-    </div>
-  </footer>
-);
+// Header and Footer are provided globally via app layout
 
 const HeroSection = () => (
   <div className="bg-stone-50 py-16 md:py-24">
@@ -165,9 +109,6 @@ const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFil
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-    <div className="bg-white flex flex-col">
-      {/* Navbar is handled by layout.tsx */}
-      
       <main className="flex-grow">
         {/* Hero Section */}
         <HeroSection />
