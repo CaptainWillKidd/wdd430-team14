@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '../context/CartContext';
 
 // --- Types ---
 interface Product {
@@ -25,7 +26,64 @@ const products: Product[] = [
   { id: 8, name: 'Handwoven Rug', category: 'Decorative', price: '$210.00', image: 'https://placehold.co/300x300/881337/white?text=Rug' },
 ];
 
-// --- Components (Navbar and Footer removed) ---
+// --- Components ---
+
+// Header is provided globally via app layout
+
+const Footer = () => (
+  <footer className="bg-stone-900 text-stone-400 py-12 border-t border-rose-900">
+    <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+      {/* Column 1: Brand */}
+      <div>
+        <h3 className="text-white text-lg font-serif font-bold mb-4">Handcrafted Haven</h3>
+        <p className="mb-4">
+          Connecting you with independent artisans to discover unique, one-of-a-kind pieces.
+        </p>
+        <div className="flex space-x-4">
+          {/* Social Placeholders */}
+          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">FB</div>
+          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">IG</div>
+          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center hover:bg-rose-800 cursor-pointer">X</div>
+        </div>
+      </div>
+
+      {/* Column 2: Shop */}
+      <div>
+        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Shop</h4>
+        <ul className="space-y-2">
+          <li><Link href="#" className="hover:text-rose-500">All Products</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Classical Arts</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Modern & Abstract</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Home Decor</Link></li>
+        </ul>
+      </div>
+
+      {/* Column 3: Support */}
+      <div>
+        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Support</h4>
+        <ul className="space-y-2">
+          <li><Link href="#" className="hover:text-rose-500">Help Center</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Shipping & Returns</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Order Status</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Contact Us</Link></li>
+        </ul>
+      </div>
+
+      {/* Column 4: Legal */}
+      <div>
+        <h4 className="text-white font-bold mb-4 uppercase tracking-wider">Legal</h4>
+        <ul className="space-y-2">
+          <li><Link href="#" className="hover:text-rose-500">Privacy Policy</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Terms of Service</Link></li>
+          <li><Link href="#" className="hover:text-rose-500">Cookie Policy</Link></li>
+        </ul>
+      </div>
+    </div>
+    <div className="text-center mt-12 border-t border-stone-800 pt-8 text-xs">
+      &copy; {new Date().getFullYear()} Handcrafted Haven. All rights reserved.
+    </div>
+  </footer>
+);
 
 const HeroSection = () => (
   <div className="bg-stone-50 py-16 md:py-24">
@@ -35,7 +93,7 @@ const HeroSection = () => (
         <h1 className="text-5xl md:text-6xl font-serif text-stone-900 leading-tight">
           Curated. Collectible. <br/> Yours.
         </h1>
-        <p className="text-lg text-stone-600">
+        <p className="text-lg text-stone-700">
           Explore a virtual marketplace dedicated to handcrafted excellence.
         </p>
         <Link href="/shop" className="inline-block bg-rose-800 text-white py-3 px-8 rounded-md font-medium hover:bg-rose-900 transition shadow-lg shadow-rose-900/20">
@@ -57,8 +115,10 @@ const HeroSection = () => (
   </div>
 );
 
-const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFilter: string[] }) => (
-  <div className="max-w-6xl mx-auto px-6 py-16">
+const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFilter: string[] }) => {
+  const { addItem } = useCart();
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-16">
     <div className="flex justify-between items-end mb-8">
       <div>
         <h2 className="text-3xl font-serif text-stone-900">{title}</h2>
@@ -84,19 +144,27 @@ const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFil
             )}
           </div>
           <div className="mt-4">
-            <p className="text-xs text-stone-500 uppercase tracking-wide">{product.category}</p>
+            <p className="text-xs text-stone-600 uppercase tracking-wide">{product.category}</p>
             <h3 className="text-lg font-medium text-stone-800 group-hover:text-rose-700 transition">{product.name}</h3>
             <p className="text-rose-700 font-bold mt-1">{product.price}</p>
+            <div className="mt-3 flex items-center space-x-2">
+              <button onClick={() => {
+                const cents = Math.round(parseFloat(product.price.replace(/[^0-9.]/g, '')) * 100);
+                addItem({ id: product.id, name: product.name, price: cents, image: product.image });
+              }} className="bg-rose-800 text-white px-3 py-1 rounded text-sm">Add to cart</button>
+            </div>
           </div>
         </div>
       ))}
     </div>
   </div>
-);
+  );
+};
 
 // --- Main Page ---
 export default function LandingPage() {
   return (
+    <div className="min-h-screen bg-white flex flex-col">
     <div className="bg-white flex flex-col">
       {/* Navbar is handled by layout.tsx */}
       
