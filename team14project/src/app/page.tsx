@@ -161,10 +161,12 @@ const CategoryPreview = ({ title, categoryFilter }: { title: string, categoryFil
   );
 };
 
-// --- Main Layout ---
+// --- Main Page ---
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
+    <div className="bg-white flex flex-col">
+      {/* Navbar is handled by layout.tsx */}
       
       <main className="flex-grow">
         {/* Hero Section */}
@@ -201,7 +203,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <Footer />
+      {/* Footer is handled by layout.tsx */}
     </div>
   );
 }
