@@ -55,7 +55,7 @@ export default function RegisterPage() {
             type="text"
             required
             placeholder="John Doe"
-            className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
         <div>
@@ -64,7 +64,7 @@ export default function RegisterPage() {
             type="email"
             required
             placeholder="name@example.com"
-            className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
         <div>
@@ -73,7 +73,7 @@ export default function RegisterPage() {
             type="password"
             required
             placeholder="Create a password"
-            className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
         
@@ -83,7 +83,7 @@ export default function RegisterPage() {
             <input
               type="text"
               placeholder="e.g. Clay & Earth Studio"
-              className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
+              className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
             />
           </div>
         )}

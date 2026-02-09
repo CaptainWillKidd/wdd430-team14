@@ -86,39 +86,31 @@ export default function AboutPage() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+
             {/* Team Member 1 */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:shadow-md transition">
               <div className="w-24 h-24 rounded-full bg-stone-100 mx-auto mb-4 overflow-hidden relative border border-stone-200">
-                <Image src="https://placehold.co/200x200/333/white?text=You" alt="Member" fill className="object-cover"/>
+                <Image src="https://placehold.co/200x200/333/white?text=WC" alt="Willian Canuto" fill className="object-cover"/>
               </div>
-              <h3 className="font-bold text-stone-900 text-lg">Your Name</h3>
-              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">Lead Developer</p>
+              <h3 className="font-bold text-stone-900 text-lg">Willian Canuto</h3>
+              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">Backend Engineer</p>
             </div>
 
             {/* Team Member 2 */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:shadow-md transition">
               <div className="w-24 h-24 rounded-full bg-stone-100 mx-auto mb-4 overflow-hidden relative border border-stone-200">
-                <Image src="https://placehold.co/200x200/333/white?text=TM" alt="Member" fill className="object-cover"/>
+                <Image src="https://placehold.co/200x200/333/white?text=FS" alt="Folusho Sanni" fill className="object-cover"/>
               </div>
-              <h3 className="font-bold text-stone-900 text-lg">Teammate One</h3>
-              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">Backend Engineer</p>
+              <h3 className="font-bold text-stone-900 text-lg">Folusho Sanni</h3>
+              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">UI/UX Designer</p>
             </div>
 
             {/* Team Member 3 */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:shadow-md transition">
               <div className="w-24 h-24 rounded-full bg-stone-100 mx-auto mb-4 overflow-hidden relative border border-stone-200">
-                <Image src="https://placehold.co/200x200/333/white?text=TM" alt="Member" fill className="object-cover"/>
+                <Image src="https://placehold.co/200x200/333/white?text=SJ" alt="Samuel Jonathan" fill className="object-cover"/>
               </div>
-              <h3 className="font-bold text-stone-900 text-lg">Teammate Two</h3>
-              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">UI/UX Designer</p>
-            </div>
-
-            {/* Team Member 4 */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:shadow-md transition">
-              <div className="w-24 h-24 rounded-full bg-stone-100 mx-auto mb-4 overflow-hidden relative border border-stone-200">
-                <Image src="https://placehold.co/200x200/333/white?text=TM" alt="Member" fill className="object-cover"/>
-              </div>
-              <h3 className="font-bold text-stone-900 text-lg">Teammate Three</h3>
+              <h3 className="font-bold text-stone-900 text-lg">Samuel Jonathan</h3>
               <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">Project Manager</p>
             </div>
           </div>
