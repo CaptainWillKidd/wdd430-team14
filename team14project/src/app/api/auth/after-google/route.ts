@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const role = url.searchParams.get('role');
 
-    const session = await getServerSession(authOptions as any);
+    const session = await getServerSession(authOptions as any) as any;
     if (!session || !session.user?.email) {
       // Not signed in — redirect to login
       return NextResponse.redirect(new URL('/login', url.origin));
