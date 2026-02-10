@@ -3,8 +3,8 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 
 export default async function DashboardOverview() {
-  const session = await getServerSession(authOptions as any);
-  if (!session || (session.user as any)?.role !== 'artisan') {
+  const session = await getServerSession(authOptions as any) as any;
+  if (!session || !session.user?.role || session.user.role !== 'artisan') {
     redirect('/login');
   }
   return (
