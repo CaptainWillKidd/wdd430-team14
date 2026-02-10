@@ -25,8 +25,12 @@ export default function RegisterPage() {
       const json = await res.json();
       if (json.ok) {
         // after creating, sign in with credentials
-        await signIn('credentials', { redirect: false, email, password });
-        router.push(userType === 'artisan' ? '/dashboard' : '/shop');
+        const res = await signIn('credentials', { redirect: false, email, password });
+        if ((res as any)?.error) {
+          alert((res as any).error || 'Login after registration failed');
+        } else {
+          router.push(userType === 'artisan' ? '/dashboard' : '/shop');
+        }
       } else {
         alert(json.error || 'Registration failed');
       }

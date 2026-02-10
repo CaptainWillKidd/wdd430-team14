@@ -8,13 +8,26 @@ import { signIn } from 'next-auth/react';
 export default function LoginPage() {
   const router = useRouter();
   const [userType, setUserType] = useState<'customer' | 'artisan'>('customer');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (userType === 'artisan') {
-      router.push('/dashboard');
-    } else {
-      router.push('/shop');
+    setLoading(true);
+    try {
+      const res = await signIn('credentials', { redirect: false, email, password });
+      // res may be undefined in some versions; check for error
+      if ((res as any)?.error) {
+        alert((res as any).error || 'Login failed');
+      } else {
+        router.push(userType === 'artisan' ? '/dashboard' : '/shop');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Login request failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,6 +69,8 @@ export default function LoginPage() {
             type="email"
             required
             placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
@@ -65,6 +80,8 @@ export default function LoginPage() {
             type="password"
             required
             placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
@@ -79,9 +96,10 @@ export default function LoginPage() {
 
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-rose-900 text-white font-bold py-3 rounded-lg hover:bg-rose-800 transition shadow-lg shadow-rose-900/20"
         >
-          Sign In as {userType === 'customer' ? 'Customer' : 'Artisan'}
+          {loading ? 'Signing in...' : `Sign In as ${userType === 'customer' ? 'Customer' : 'Artisan'}`}
         </button>
 
         <div className="mt-3">

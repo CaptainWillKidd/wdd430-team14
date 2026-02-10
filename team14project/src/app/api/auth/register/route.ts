@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     const hash = await bcrypt.hash(password, 10);
     const id = randomUUID();
     await sql`INSERT INTO users (id, name, email, password_hash, role, created_at) VALUES (${id}, ${name}, ${email}, ${hash}, ${role ?? 'customer'}, now())`;
+    console.log('[register] created user', email, 'role=', role ?? 'customer');
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error('register error', err);

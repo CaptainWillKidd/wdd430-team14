@@ -17,8 +17,10 @@ export const authOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         try {
           const [row] = await sql`SELECT id, name, email, password_hash FROM users WHERE email = ${credentials.email}`;
+          console.log('[auth] credentials attempt for', credentials.email, 'rowFound:', !!row, 'hasHash:', !!row?.password_hash);
           if (!row || !row.password_hash) return null;
           const match = await bcrypt.compare(credentials.password, row.password_hash);
+          console.log('[auth] credentials compare result for', credentials.email, match);
           if (!match) return null;
           return { id: row.id, name: row.name, email: row.email };
         } catch (err) {
