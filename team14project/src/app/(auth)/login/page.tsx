@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function LoginPage() {
             type="email"
             required
             placeholder="name@example.com"
-            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
         <div>
@@ -64,7 +65,7 @@ export default function LoginPage() {
             type="password"
             required
             placeholder="••••••••"
-            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
+            className="w-full px-4 py-3 rounded-lg border border-stone-300 placeholder-stone-600 text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-800 focus:border-transparent transition"
           />
         </div>
 
@@ -82,6 +83,17 @@ export default function LoginPage() {
         >
           Sign In as {userType === 'customer' ? 'Customer' : 'Artisan'}
         </button>
+
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={() => signIn('google', { callbackUrl: `/api/auth/after-google?role=${userType}` })}
+            className="w-full inline-flex items-center justify-center gap-3 border border-stone-300 py-2 rounded-lg bg-white text-stone-900 font-semibold hover:bg-stone-50 shadow-sm transition text-sm"
+          >
+            <span className="w-6 h-6 flex items-center justify-center rounded bg-red-50 text-red-600 font-bold">G</span>
+            Sign in with Google
+          </button>
+        </div>
       </form>
 
       <p className="mt-8 text-center text-stone-500 text-sm">

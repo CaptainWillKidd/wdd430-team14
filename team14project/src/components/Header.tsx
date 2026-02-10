@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import MiniCart from "./MiniCart";
 import { useCart } from "../context/CartContext";
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { totalItems } = useCart();
+  const { data: session } = useSession();
 
   return (
     <header className="w-full bg-white border-b border-stone-200 sticky top-0 z-50">
@@ -21,6 +23,9 @@ export default function Header() {
           <Link href="/shop" className="hover:text-rose-700 transition">Shop</Link>
           <Link href="/about" className="hover:text-rose-700 transition">About</Link>
           <Link href="/artisans" className="hover:text-rose-700 transition">Artisans</Link>
+          {session?.user?.role === 'artisan' && (
+            <Link href="/dashboard" className="hover:text-rose-700 transition font-bold">Dashboard</Link>
+          )}
         </nav>
 
         <div className="flex items-center space-x-6">
@@ -28,7 +33,14 @@ export default function Header() {
             <input type="text" placeholder="Search..." className="pl-3 pr-8 py-1 rounded-full border border-stone-300 text-sm focus:border-rose-700 focus:outline-none" />
           </div>
 
-          <Link href="/login" className="text-sm font-bold text-rose-800 hover:text-rose-900">Login</Link>
+          {!session?.user ? (
+            <Link href="/login" className="text-sm font-bold text-rose-800 hover:text-rose-900">Login</Link>
+          ) : (
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-stone-700">{(session.user as any)?.name ?? session.user?.email}</span>
+              <button onClick={() => signOut({ callbackUrl: '/' })} className="text-sm text-rose-700">Sign out</button>
+            </div>
+          )}
 
           <div className="relative">
             <button onClick={() => setOpen((s) => !s)} className="relative text-stone-700 hover:text-rose-700">
