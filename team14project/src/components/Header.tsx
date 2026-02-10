@@ -23,7 +23,7 @@ export default function Header() {
           <Link href="/shop" className="hover:text-rose-700 transition">Shop</Link>
           <Link href="/about" className="hover:text-rose-700 transition">About</Link>
           <Link href="/artisans" className="hover:text-rose-700 transition">Artisans</Link>
-          {session?.user?.role === 'artisan' && (
+          {(session?.user as any)?.role === 'artisan' && (
             <Link href="/dashboard" className="hover:text-rose-700 transition font-bold">Dashboard</Link>
           )}
         </nav>
@@ -37,7 +37,7 @@ export default function Header() {
             <Link href="/login" className="text-sm font-bold text-rose-800 hover:text-rose-900">Login</Link>
           ) : (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-stone-700">{(session.user as any)?.name ?? session.user?.email}</span>
+              <span className="text-sm text-stone-700">{(session.user as any)?.name ?? (session.user as any)?.email}</span>
               <button onClick={() => signOut({ callbackUrl: '/' })} className="text-sm text-rose-700">Sign out</button>
             </div>
           )}

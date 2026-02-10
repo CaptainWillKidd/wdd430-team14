@@ -8,8 +8,8 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const role = url.searchParams.get('role');
 
-    const session = await getServerSession(authOptions as any) as any;
-    if (!session || !session.user?.email) {
+    const session = (await getServerSession(authOptions as any)) as any;
+    if (!session || !(session as any)?.user?.email) {
       // Not signed in — redirect to login
       return NextResponse.redirect(new URL('/login', url.origin));
     }
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     // If role=artisan, promote current user to artisan
     if (role === 'artisan') {
       try {
-        await sql`UPDATE users SET role = 'artisan' WHERE email = ${session.user.email}`;
+        await sql`UPDATE users SET role = 'artisan' WHERE email = ${(session as any).user.email}`;
       } catch (e) {
         console.error('after-google promote error', e);
       }

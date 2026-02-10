@@ -56,12 +56,12 @@ export const authOptions = {
     },
     async session({ session, token, user }: { session: any; token: any; user: any }) {
       try {
-        if (session?.user?.email) {
-          const [row] = await sql`SELECT id, role, name FROM users WHERE email = ${session.user.email}`;
+        if ((session as any)?.user?.email) {
+          const [row] = await sql`SELECT id, role, name FROM users WHERE email = ${(session as any).user.email}`;
           if (row) {
             (session as any).user.id = row.id;
             (session as any).user.role = row.role;
-            (session as any).user.name = row.name ?? session.user.name;
+            (session as any).user.name = row.name ?? (session as any).user.name;
           }
         }
       } catch (err) {

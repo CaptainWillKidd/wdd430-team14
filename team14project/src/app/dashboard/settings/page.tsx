@@ -5,8 +5,8 @@ import UserPromote from '@/components/UserPromote';
 import SettingsClient from '@/components/SettingsClient';
 
 export default async function SettingsPage() {
-  const session = await getServerSession(authOptions as any);
-  if (!session || (session.user as any)?.role !== 'artisan') {
+  const session = (await getServerSession(authOptions as any)) as any;
+  if (!session || !(session as any)?.user?.role || (session as any).user.role !== 'artisan') {
     redirect('/login');
   }
 

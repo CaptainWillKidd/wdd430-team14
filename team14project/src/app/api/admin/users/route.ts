@@ -5,8 +5,8 @@ import sql from '@/lib/db';
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions as any) as any;
-    if (!session || session.user?.role !== 'artisan') {
+    const session = (await getServerSession(authOptions as any)) as any;
+    if (!session || !(session as any)?.user?.role || (session as any).user.role !== 'artisan') {
       return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
     }
 
