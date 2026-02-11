@@ -1,8 +1,12 @@
-'use client';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
-import React from 'react';
-
-export default function DashboardOverview() {
+export default async function DashboardOverview() {
+  const session = (await getServerSession(authOptions as any)) as any;
+  if (!session || !(session as any)?.user?.role || (session as any).user.role !== 'artisan') {
+    redirect('/login');
+  }
   return (
     <div>
       <div className="mb-8">
