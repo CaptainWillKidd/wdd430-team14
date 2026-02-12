@@ -13,18 +13,21 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white border-b border-stone-200 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="max-w-6xl mx-auto px-2 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/" className="text-2xl font-serif font-bold text-stone-800 tracking-tight">Handcrafted Haven</Link>
         </div>
 
-        <nav className="hidden md:flex space-x-8 text-sm font-medium text-stone-700">
+        <nav className="hidden md:flex space-x-7 text-sm font-medium text-stone-700">
           <Link href="/" className="hover:text-rose-700 transition">Home</Link>
           <Link href="/shop" className="hover:text-rose-700 transition">Shop</Link>
           <Link href="/about" className="hover:text-rose-700 transition">About</Link>
           <Link href="/artisans" className="hover:text-rose-700 transition">Artisans</Link>
           {(session?.user as any)?.role === 'artisan' && (
             <Link href="/dashboard" className="hover:text-rose-700 transition font-bold">Dashboard</Link>
+          )}
+          {((session?.user as any)?.role === 'artisan' || (session?.user as any)?.role === 'customer') && (
+             <Link href="/product_order" className="hover:text-rose-700 transition font-bold">My Order</Link>
           )}
         </nav>
 
