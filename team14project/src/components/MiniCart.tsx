@@ -11,6 +11,13 @@ export default function MiniCart({ onClose }: { onClose?: () => void }) {
     return `$${(cents / 100).toFixed(2)}`;
   };
 
+      const currentOrder = {
+        items: [
+            { id: '1', name: 'Premium Rose Pillow', quantity: 1, price: 49.99, image: '🌹' },
+            { id: '2', name: 'Elegant Bedsheet', quantity: 2, price: 79.99, image: '🛏️' },
+        ],
+    };
+    
   return (
     <div className="w-80 bg-white border border-stone-200 shadow-xl rounded-md p-4">
       <div className="flex items-center justify-between mb-3">
@@ -22,15 +29,15 @@ export default function MiniCart({ onClose }: { onClose?: () => void }) {
         <div className="text-sm text-stone-700 py-8 text-center">Your cart is empty</div>
       ) : (
         <div className="space-y-3">
-          {items.map((it) => (
-            <div key={it.id} className="flex items-center">
-              <img src={it.image ?? `https://placehold.co/80x80/881337/fff?text=Img`} alt={it.name} className="w-16 h-16 object-cover rounded-md mr-3 border" />
+          {items.map((currentOrder) => (
+            <div key={currentOrder.id} className="flex items-center">
+              <img src={currentOrder.image ?? `https://placehold.co/80x80/881337/fff?text=Img`} alt={currentOrder.name} className="w-16 h-16 object-cover rounded-md mr-3 border" />
               <div className="flex-1">
-                <div className="text-sm font-medium text-stone-800">{it.name}</div>
-                <div className="text-xs text-stone-700">{fmt(it.price)}</div>
+                <div className="text-sm font-medium text-stone-800">{currentOrder.name}</div>
+                <div className="text-xs text-stone-700">{fmt(currentOrder.price)}</div>
                 <div className="mt-2 flex items-center space-x-2">
-                  <input type="number" min={1} value={it.quantity} onChange={(e) => updateQuantity(it.id, Number(e.target.value))} className="w-16 border rounded px-2 py-1 text-sm text-stone-800" />
-                  <button onClick={() => removeItem(it.id)} className="text-xs text-rose-700">Remove</button>
+                  <input type="number" min={1} value={currentOrder.quantity} onChange={(e) => updateQuantity(currentOrder.id, Number(e.target.value))} className="w-16 border rounded px-2 py-1 text-sm text-stone-800" />
+                  <button onClick={() => removeItem(currentOrder.id)} className="text-xs text-rose-700">Remove</button>
                 </div>
               </div>
             </div>

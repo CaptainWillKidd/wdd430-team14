@@ -5,8 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 
+// import { Button } from '@/app/ui/button';
+import {createOrder, State} from '@/app/lib/actions';
 
-interface OrderItem {
+import { useActionState } from 'react';
+
+
+
+type OrderItem = {
     id: string;
     name: string;
     quantity: number;
@@ -14,7 +20,7 @@ interface OrderItem {
     image: string;
 }
 
-interface Order {
+type OrderField= {
     orderNumber: string;
     date: string;
     total: number;
@@ -22,23 +28,30 @@ interface Order {
     items: OrderItem[];
 }
 
-export default function ProductOrderPage() {
-    const [activeTab, setActiveTab] = useState<'confirmation' | 'history' | 'processing'>('confirmation');
+
+ 
+
+export default function Form({orders}: {orders: OrderField[]}) {
+      const initialState: State = { message: null, errors: {} }; 
+       const [State, formAction] = useActionState(createOrder, initialState);
+        const [activeTab, setActiveTab] = useState<'confirmation' | 'history' | 'processing'>('confirmation');
 
     // Sample confirmation order
-    const currentOrder: Order = {
-        orderNumber: 'ORD-2024-001234',
+    const currentOrder: OrderField = {
+        orderNumber: 'SAM-2024-001234',
         date: new Date().toLocaleDateString(),
-        total: 299.99,
-        status: 'completed',
         items: [
             { id: '1', name: 'Premium Rose Pillow', quantity: 1, price: 49.99, image: '🌹' },
             { id: '2', name: 'Elegant Bedsheet', quantity: 2, price: 79.99, image: '🛏️' },
         ],
+        total: 0,
+        status: 'completed',
     };
+    
+    
 
     // Sample order history
-    const orderHistory: Order[] = [
+    const orderHistory: OrderField[] = [
         {
             orderNumber: 'ORD-2024-001233',
             date: '2024-01-15',
@@ -120,7 +133,7 @@ export default function ProductOrderPage() {
             {/* Content */}
             <div className="max-w-4xl mx-auto px-4 pb-12">
                 {activeTab === 'processing' && (
-                    <form>
+                    <form action={formAction}>
                     <div className="bg-white border-2 border-rose-800 rounded-lg p-8 shadow-lg">
                         <h2 className="text-3xl font-bold text-rose-800 mb-4">📦 Processing Orders</h2>
                         <p className="text-gray-600 mb-6">Your orders are being prepared for shipment</p>
@@ -132,7 +145,7 @@ export default function ProductOrderPage() {
 
                         <div className="bg-rose-800 text-white border border-rose-800 rounded-lg p-6 mb-6">
                             <p className="text-sm opacity-90">Order Number</p>
-                            <p className="text-2xl font-bold">{currentOrder.orderNumber}</p>
+                            <input id="orderNumber" name="orderNumber" className="text-2xl font-bold" value={currentOrder.orderNumber} readOnly/>
                             <p className="text-sm opacity-90 mt-2">Order Date: {currentOrder.date}</p>
                         </div>
 
@@ -141,31 +154,33 @@ export default function ProductOrderPage() {
                             {currentOrder.items.map((item) => (
                                 <div key={item.id} className="flex justify-between items-center py-3 border-b border-gray-200">
                                     <div className="flex items-center gap-4">
-                                        <span className="text-3xl">{item.image}</span>
+                                        <span className="text-3xl">
+                                            <input id={`image-${item.id}`} name={`image-${item.id}`} className="w-16 h-16" value={item.image} readOnly />
+                                        </span>
                                         <div>
-                                            <p className="font-semibold text-gray-800">{item.name}</p>
-                                            <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                                            <input id={`name-${item.id}`} name="items" className="font-semibold text-gray-800" value={item.name} readOnly />
+                                            <input id={`quantity-${item.id}`} name="itemQuantity" className="text-sm text-gray-500" value={item.quantity} readOnly />
                                         </div>
                                     </div>
-                                    <p className="font-semibold text-gray-800">${item.price.toFixed(2)}</p>
+                                    <input id="price" name="price" className="font-semibold text-gray-800" value={item.price.toFixed(2)} readOnly/>
                                 </div>
                             ))}
 
                             <div className="flex justify-between items-center py-4 mt-4 bg-rose-800 text-white px-4 rounded-lg">
                                 <p className="text-xl font-bold">Total</p>
-                                <p className="text-2xl font-bold">${currentOrder.total.toFixed(2)}</p>
+                                <input id="total" name="total" className="text-2xl font-bold" value={`${currentOrder.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}`} readOnly />
                             </div>
 
                                 <div className="flex gap-8 mt-6">
-                                    <button type="submit" className="flex-1 px-6 py-3 bg-rose-800 text-white rounded-lg font-semibold hover:bg-rose-900 transition">
-                                        Process Order
-                                    </button>
                                     <Link href="/shop"
                                      className="flex-1 px-6 py-3 text-center bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition">
                                         Continue Shopping
                                     </Link>
-                                </div>
 
+                                    <button type="submit" className="flex-1 px-6 py-3 bg-rose-800 text-white rounded-lg font-semibold hover:bg-rose-900 transition">
+                                        Process Order
+                                    </button>
+                                </div>
                         </div>
                     </div>
                     </form>
