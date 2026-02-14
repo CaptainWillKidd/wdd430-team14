@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn({ user, account, profile }: { user: any; account: any; profile: any }) {
+    async signIn({ user, account, profile }: { user: any; account: any; profile?: any }) {
       try {
         const email = user.email ?? (profile as any)?.email;
         const name = user.name ?? (profile as any)?.name ?? null;
