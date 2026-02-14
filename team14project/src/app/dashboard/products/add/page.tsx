@@ -1,137 +1,173 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function AddProductPage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      router.push('/dashboard/products');
-    }, 1500);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Limit file size to 1MB to prevent database issues
+      if (file.size > 1024 * 1024) {
+        alert("File is too big! Please choose an image under 1MB.");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    const formData = new FormData(e.currentTarget);
+    
+    const data = {
+      name: formData.get('name'),
+      description: formData.get('description'),
+      price: formData.get('price'),
+      category: formData.get('category'),
+      stock: formData.get('stock'),
+      image_url: imagePreview, 
+    };
+
+    try {
+      const res = await fetch('/api/products/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error('Failed to add product');
+
+      router.push('/dashboard/products');
+      router.refresh(); 
+    } catch (err) {
+      console.error(err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <Link href="/dashboard/products" className="text-sm text-stone-500 hover:text-rose-800 mb-2 inline-block">
-          ← Back to Products
-        </Link>
-        <h1 className="text-3xl font-serif font-bold text-stone-900">Add New Product</h1>
-        <p className="text-stone-500">Share your latest creation with the world.</p>
-      </div>
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6 text-stone-900">Add New Product</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl border border-stone-200 shadow-sm">
         
-        {/* SECTION 1: Basic Info */}
-        <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
-          <h2 className="text-lg font-bold text-stone-800 mb-4 border-b border-stone-100 pb-2">Basic Information</h2>
-          <div className="grid grid-cols-1 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">Product Name</label>
-              <input 
-                type="text" 
-                required
-                placeholder="e.g. Hand-carved Walnut Bowl"
-                className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-800 focus:border-transparent outline-none transition"
-              />
+        {/* Image Upload Section */}
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-2">Product Image</label>
+          <div className="flex items-center gap-4">
+            <div className="relative w-24 h-24 bg-stone-100 rounded-lg overflow-hidden border border-stone-300 flex items-center justify-center">
+              {imagePreview ? (
+                <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+              ) : (
+                <span className="text-stone-400 text-xs text-center px-2">No image</span>
+              )}
             </div>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-stone-900 file:text-white hover:file:bg-stone-800"
+            />
+          </div>
+          <p className="text-xs text-stone-500 mt-1">Max file size: 1MB</p>
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Category</label>
-                <select className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-800 focus:border-transparent outline-none transition bg-white">
-                  <option value="">Select a category...</option>
-                  <option value="Classical">Classical Arts</option>
-                  <option value="Modern">Modern & Abstract</option>
-                  <option value="Media Focus">Media Focus</option>
-                  <option value="Decorative">Decorative Arts</option>
-                </select>
-              </div>
-              
-              {/* Moved Price Here for better flow */}
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Price ($)</label>
-                <input 
-                  type="number" 
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
-                  className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-800 focus:border-transparent outline-none transition"
-                />
-              </div>
-            </div>
+        {/* Product Name */}
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Product Name</label>
+          <input 
+            name="name" 
+            required 
+            type="text" 
+            className="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-stone-900 focus:outline-none"
+            placeholder="e.g. Handmade Clay Vase"
+          />
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">Description</label>
-              <textarea 
-                rows={4}
-                placeholder="Describe the materials, process, and story behind this piece..."
-                className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-800 focus:border-transparent outline-none transition"
-              ></textarea>
-            </div>
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Description</label>
+          <textarea 
+            name="description" 
+            required 
+            rows={4} 
+            className="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-stone-900 focus:outline-none"
+            placeholder="Tell the story behind this piece..."
+          />
+        </div>
+
+        {/* Price & Stock Row */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-1">Price ($)</label>
+            <input 
+              name="price" 
+              required 
+              type="number" 
+              step="0.01" 
+              min="0"
+              className="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-stone-900 focus:outline-none"
+              placeholder="0.00"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-1">Stock</label>
+            <input 
+              name="stock" 
+              required 
+              type="number" 
+              min="1"
+              className="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-stone-900 focus:outline-none"
+              placeholder="1"
+            />
           </div>
         </div>
 
-        {/* SECTION 2: Media & Stock (Combined for compactness) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {/* Image Upload - COMPACT VERSION */}
-          <div className="md:col-span-2 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
-            <h2 className="text-lg font-bold text-stone-800 mb-4 border-b border-stone-100 pb-2">Product Image</h2>
-            
-            <div className="border-2 border-dashed border-stone-300 rounded-lg p-6 text-center hover:border-rose-800 transition cursor-pointer bg-stone-50 flex flex-col items-center justify-center min-h-[160px]">
-              <svg className="w-10 h-10 text-stone-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="text-sm text-stone-600 font-medium">Click to upload image</p>
-              <p className="text-xs text-stone-400 mt-1">Max file size: 5MB</p>
-            </div>
-          </div>
-
-          {/* Inventory Sidebar */}
-          <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm h-full">
-            <h2 className="text-lg font-bold text-stone-800 mb-4 border-b border-stone-100 pb-2">Inventory</h2>
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">Stock Quantity</label>
-              <input 
-                type="number" 
-                min="1"
-                placeholder="1"
-                className="w-full px-4 py-2 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-800 focus:border-transparent outline-none transition"
-              />
-              <p className="text-xs text-stone-400 mt-2">
-                Set to 0 to mark as "Out of Stock".
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-end space-x-4 pt-4 border-t border-stone-200">
-          <Link 
-            href="/dashboard/products"
-            className="px-6 py-3 rounded-lg border border-stone-300 text-stone-700 font-medium hover:bg-stone-50 transition"
+        {/* Updated Categories */}
+        <div>
+          <label className="block text-sm font-medium text-stone-700 mb-1">Category</label>
+          <select 
+            name="category" 
+            className="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-stone-900 focus:outline-none bg-white"
           >
-            Cancel
-          </Link>
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className={`px-8 py-3 rounded-lg bg-rose-800 text-white font-bold hover:bg-rose-900 transition shadow-lg shadow-rose-900/20 flex items-center ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
-          >
-            {isSubmitting ? 'Publishing...' : 'Publish Product'}
-          </button>
+            <option value="Classical">Classical</option>
+            <option value="Modern">Modern</option>
+            <option value="Media Focus">Media Focus</option>
+            <option value="Decorative">Decorative</option>
+          </select>
         </div>
 
+        {/* Submit Button */}
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="w-full bg-stone-900 text-white py-3 rounded-lg font-bold hover:bg-stone-800 transition disabled:opacity-50"
+        >
+          {loading ? 'Adding...' : 'Publish Product'}
+        </button>
       </form>
     </div>
   );

@@ -1,111 +1,148 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { sql } from '@/lib/db';
+import { notFound } from 'next/navigation';
 
-export default function ArtisanProfilePage() {
-  // Mock Data
-  const artisan = {
-    name: 'Marcus Stone',
-    location: 'Rome, Italy',
-    specialty: 'Classical Sculpture',
-    bio: 'Sculpting modern history from Italian marble. My work explores the intersection of Renaissance techniques and contemporary minimalism.',
-    image: 'https://placehold.co/400x400/333/white?text=MS',
-    followers: '2.4k',
-    rating: 4.9,
-  };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-  const products = [
-    { id: 1, name: 'Roman Bust', price: 120, image: 'https://placehold.co/600x600/881337/white?text=Bust' },
-    { id: 2, name: 'Oil Painting', price: 450, image: 'https://placehold.co/600x600/881337/white?text=Painting' },
-    { id: 3, name: 'Marble Bookends', price: 85, image: 'https://placehold.co/600x600/881337/white?text=Bookends' },
-    { id: 4, name: 'Clay Vase', price: 65, image: 'https://placehold.co/600x600/881337/white?text=Vase' },
-    { id: 5, name: 'Sketch No. 5', price: 45, image: 'https://placehold.co/600x600/881337/white?text=Sketch' },
-    { id: 6, name: 'Bronze Figure', price: 320, image: 'https://placehold.co/600x600/881337/white?text=Bronze' },
-    { id: 7, name: 'Abstract Clay', price: 90, image: 'https://placehold.co/600x600/881337/white?text=Abstract' },
-    { id: 8, name: 'Charcoal Study', price: 55, image: 'https://placehold.co/600x600/881337/white?text=Charcoal' },
-    { id: 9, name: 'Limestone Block', price: 150, image: 'https://placehold.co/600x600/881337/white?text=Stone' },
-  ];
+export default async function ArtisanProfilePage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const resolvedParams = await params;
+  const artisanId = resolvedParams?.id?.trim();
+
+  if (!artisanId) notFound();
+
+  // 1. FIXED QUERY: Removed 'image_url' from the SELECT statement
+  const results = await sql`
+    SELECT id, name, email, role, created_at
+    FROM users 
+    WHERE id = ${artisanId}::uuid
+  `;
+  const artisan = results[0];
+
+  if (!artisan || artisan.role !== 'artisan') {
+    notFound();
+  }
+
+  // 2. Fetch Real Products (This table DOES have image_url, so this query is fine)
+  const products = await sql`
+    SELECT id, name, price, image_url, category, description
+    FROM products 
+    WHERE artisan_id = ${artisanId}::uuid
+    ORDER BY created_at DESC
+  `;
+
+  // Use a high-quality initials-based avatar since there is no image_url in the users table
+  const profileImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(artisan.name)}&background=881337&color=fff&size=200`;
 
   return (
     <div className="min-h-screen bg-white pt-12">
       
       {/* 1. PROFILE HEADER */}
       <div className="max-w-2xl mx-auto px-6 text-center mb-20">
-        
-        {/* Avatar */}
         <div className="mb-6 inline-block">
-          <div className="w-32 h-32 rounded-full overflow-hidden border border-stone-100 mx-auto shadow-sm">
-            <Image src={artisan.image} alt={artisan.name} width={128} height={128} className="object-cover" />
+          <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-stone-50 mx-auto shadow-xl bg-stone-100 flex items-center justify-center">
+            {/* Using a standard img tag for the external API avatar */}
+            <img 
+              src={profileImage} 
+              alt={artisan.name} 
+              className="object-cover h-full w-full" 
+            />
           </div>
         </div>
 
-        {/* Info */}
         <h1 className="text-4xl font-serif font-bold text-stone-900 mb-2">{artisan.name}</h1>
-        <p className="text-rose-800 text-sm font-bold tracking-widest uppercase mb-4">{artisan.specialty}</p>
+        <p className="text-rose-800 text-sm font-bold tracking-widest uppercase mb-4">Verified Artisan</p>
         
-        <p className="text-stone-600 leading-relaxed mb-8 max-w-lg mx-auto">
-          {artisan.bio}
+        <p className="text-stone-600 leading-relaxed mb-8 max-w-lg mx-auto italic font-serif">
+          "Sharing my creative journey and handcrafted masterpieces with the world."
+          <br />
+          <span className="not-italic text-xs text-stone-400 mt-2 block uppercase tracking-tighter">
+            Member since {new Date(artisan.created_at).getFullYear()}
+          </span>
         </p>
 
         {/* Stats Row */}
-        <div className="flex justify-center space-x-12 mb-8 border-t border-b border-stone-100 py-4">
+        <div className="flex justify-center space-x-12 mb-8 border-t border-b border-stone-100 py-6">
           <div className="text-center">
-            <span className="font-bold text-stone-900 block text-lg">{products.length}</span>
-            <span className="text-xs text-stone-400 uppercase tracking-wider">Works</span>
+            <span className="font-bold text-stone-900 block text-xl">{products.length}</span>
+            <span className="text-[10px] text-stone-400 uppercase tracking-widest font-bold">Works</span>
           </div>
           <div className="text-center">
-            <span className="font-bold text-stone-900 block text-lg">{artisan.followers}</span>
-            <span className="text-xs text-stone-400 uppercase tracking-wider">Followers</span>
+            <span className="font-bold text-stone-900 block text-xl">100%</span>
+            <span className="text-[10px] text-stone-400 uppercase tracking-widest font-bold">Original</span>
           </div>
           <div className="text-center">
-            <span className="font-bold text-stone-900 block text-lg">{artisan.rating} ★</span>
-            <span className="text-xs text-stone-400 uppercase tracking-wider">Rating</span>
+            <span className="font-bold text-stone-900 block text-xl">5.0 ★</span>
+            <span className="text-[10px] text-stone-400 uppercase tracking-widest font-bold">Rating</span>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">
-          <button className="bg-stone-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-stone-800 transition shadow-lg shadow-stone-200 w-full md:w-auto">
-            Follow
+          <button className="bg-stone-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-stone-700 transition shadow-lg shadow-stone-200 w-full md:w-auto">
+            Follow Artisan
           </button>
-          <button className="border border-stone-300 text-stone-700 px-8 py-3 rounded-xl font-bold hover:bg-stone-50 transition w-full md:w-auto">
-            Contact
-          </button>
+          <a 
+            href={`mailto:${artisan.email}`}
+            className="border-2 border-stone-100 text-stone-700 px-8 py-3 rounded-xl font-bold hover:bg-stone-50 transition w-full md:w-auto text-center"
+          >
+            Inquiry
+          </a>
         </div>
       </div>
 
       {/* 2. GALLERY GRID */}
-      <div className="max-w-6xl mx-auto px-6 pb-24"> {/* Added pb-24 for footer spacing */}
-        <h2 className="text-xl font-serif font-bold text-stone-900 mb-8">Latest Works</h2>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"> {/* Changed gap-1 to gap-8 */}
-          {products.map((product) => (
-            <Link href={`/shop/${product.id}`} key={product.id} className="group block">
-              <div className="relative aspect-[4/5] bg-stone-50 overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
-                <Image 
-                  src={product.image} 
-                  alt={product.name} 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                />
-                
-                {/* Minimal Overlay on Hover */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </div>
-              
-              <div className="mt-4 flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-serif font-medium text-stone-900 group-hover:text-rose-800 transition">{product.name}</h3>
-                  <p className="text-sm text-stone-500">Available Now</p>
-                </div>
-                <span className="text-lg font-bold text-stone-900">${product.price}</span>
-              </div>
-            </Link>
-          ))}
+      <div className="max-w-6xl mx-auto px-6 pb-24">
+        <div className="flex items-center justify-between mb-10">
+            <h2 className="text-2xl font-serif font-bold text-stone-900 underline decoration-rose-800 decoration-4 underline-offset-8">The Collection</h2>
+            <p className="text-xs text-stone-400 font-bold uppercase tracking-widest">{products.length} Pieces available</p>
         </div>
-
+        
+        {products.length === 0 ? (
+          <div className="text-center py-24 bg-stone-50 rounded-3xl border-2 border-dashed border-stone-200">
+            <p className="text-stone-400 font-serif italic text-lg">This artisan has not published any works yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+            {products.map((product: any) => (
+              <Link href={`/shop/${product.id}`} key={product.id} className="group block">
+                <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
+                  {product.image_url ? (
+                    <Image 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      fill 
+                      className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-stone-300 italic">No Image</div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                
+                <div className="mt-6 flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xl font-serif font-bold text-stone-900 group-hover:text-rose-800 transition">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-stone-400 font-bold uppercase tracking-widest mt-1">
+                      {product.category}
+                    </p>
+                  </div>
+                  <span className="text-xl font-bold text-stone-900 bg-stone-50 px-3 py-1 rounded-lg border border-stone-100">
+                    ${Number(product.price).toLocaleString()}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
