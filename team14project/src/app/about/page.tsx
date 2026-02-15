@@ -102,7 +102,7 @@ export default function AboutPage() {
                 <Image src="https://placehold.co/200x200/333/white?text=FS" alt="Folusho Sanni" fill className="object-cover"/>
               </div>
               <h3 className="font-bold text-stone-900 text-lg">Folusho Sanni</h3>
-              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">UI/UX Designer</p>
+              <p className="text-rose-800 text-xs uppercase font-bold mt-1 tracking-wider">Full Stack Developer</p>
             </div>
 
             {/* Team Member 3 */}
